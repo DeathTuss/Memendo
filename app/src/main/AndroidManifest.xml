@@ -10,7 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Memento">
         <activity
+            android:name=".NewMourningSpaceActivity"
+            android:label="@string/title_activity_new_mournig_space"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="caen1500.memento.MainActivity" />
+        </activity>
+        <activity
             android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
