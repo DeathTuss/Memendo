@@ -10,6 +10,7 @@
 
     <color name="colorEditTextLight">#009688</color>
     <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryLight">#84DCD3</color>
     <color name="colorPrimaryDark">#006C62</color>
     <color name="colorAccent">#C33163</color>
 </resources>

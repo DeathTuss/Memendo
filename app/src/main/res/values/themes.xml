@@ -7,4 +7,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="Theme.Memento.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.Memento.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.Memento.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

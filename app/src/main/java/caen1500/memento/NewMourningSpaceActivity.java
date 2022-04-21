@@ -1,5 +1,6 @@
 package caen1500.memento;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,14 +15,17 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.santalu.maskedittext.MaskEditText;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class NewMourningSpaceActivity extends AppCompatActivity {
 
     private TextInputLayout name;
-    private TextInputEditText birthDate, deceasedDate;
+    private MaskEditText birthDate, deceasedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +35,6 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.new_menu);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
 
     }
 
@@ -59,24 +62,40 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
 
     private void getViews() {
         name = findViewById(R.id.editName);
-        birthDate = findViewById(R.id.birthDate);
+        birthDate = findViewById(R.id.bornDate);
         deceasedDate = findViewById(R.id.deceasedDate);
     }
     private void save() {
 
-      //  validateName();
-       // validateLocation();
+        validateName();
+        validateBirthDate();
+        validateDeathDate();
 
         if (validateName() && validateBirthDate() && validateDeathDate()) {
-            String saved = "Name: " +  name.getEditText().getText().toString() + "\nBorn of date: " + birthDate.getText() + "\nDeceased of date: " +
-                    deceasedDate.getText();
+            String saved = "Name: " +  name.getEditText().getText().toString() + "\nBorn of date: " + birthDate.getText().toString() + "\nDeceased of date: " +
+                    deceasedDate.getText().toString();
             Toast.makeText(getApplicationContext(), saved, Toast.LENGTH_LONG).show();
 
-            //BathingSitesView.setSites(1);
-            clear();
         }
+        String dirName = name.getEditText().getText().toString();//.replace(" ","_");
+        File myDir = new File(getFilesDir(), dirName);
+        myDir.mkdir();
+        new File(myDir.getPath()+"/","gallery").mkdir();
+        File file = new File(myDir.getPath()+"/gallery/","Category.json");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        new File(myDir.getPath()+"/","wall").mkdir();
+        File fileWall = new File(myDir.getPath()+"/wall/","wall.json");
+        try {
+            fileWall.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        clear();
     }
-
     private boolean validateName() {
         if (name.getEditText().getText().toString().equals("")) {
             name.setHelperText("Name required");
@@ -91,24 +110,24 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
 
     private boolean validateBirthDate() {
         if (birthDate.getText().toString().equals("")) {
-            birthDate.setHint("Date required");
-            birthDate.setHintTextColor(ColorStateList.valueOf(ContextCompat.getColor(getApplicationContext(),
+            birthDate.setText("Date required");
+            birthDate.setTextColor(ColorStateList.valueOf(ContextCompat.getColor(getApplicationContext(),
                     R.color.colorAccent)));
             return false;
         } else {
-            birthDate.setHint(null);
+            birthDate.setText(null);
             return true;
         }
     }
 
     private boolean validateDeathDate() {
         if (deceasedDate.getText().toString().equals("")) {
-            deceasedDate.setHint("Date required");
-            deceasedDate.setHintTextColor(ColorStateList.valueOf(ContextCompat.getColor(getApplicationContext(),
+            deceasedDate.setText("Date required");
+            deceasedDate.setTextColor(ColorStateList.valueOf(ContextCompat.getColor(getApplicationContext(),
                     R.color.colorAccent)));
             return false;
         } else {
-            deceasedDate.setHint(null);
+            deceasedDate.setText(null);
             return true;
         }
     }
@@ -122,13 +141,13 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
         if(name.getEditText() != null) {
             name.getEditText().setText(null);
         }
-        birthDate.setHint(null);
+        birthDate.setText(null);
         if(birthDate.getText() != null) {
-            birthDate.setHint(null);
+            birthDate.setText(null);
         }
-        deceasedDate.setHint(null);
+        deceasedDate.setText(null);
         if(deceasedDate.getText() != null) {
-            deceasedDate.setHint(null);
+            deceasedDate.setText(null);
         }
 
     }

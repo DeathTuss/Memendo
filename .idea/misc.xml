@@ -3,14 +3,47 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_main.xml" value="0.3242753623188406" />
-        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_new_mourning_space.xml" value="0.1" />
-        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/content_main.xml" value="0.15714285714285714" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3675" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/drawable/ic_add_pic.xml" value="0.3675" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/drawable/ic_baseline_contacts_24.xml" value="0.2645" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/drawable/ic_gallery_background.xml" value="0.2645" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/drawable/ic_icons_background.xml" value="0.3675" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/drawable/ic_image_gallery.xml" value="0.3085" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3675" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/drawable/ic_video_gallery.xml" value="0.3085" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/drawable/ic_wall_background.xml" value="0.3675" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_gallery.xml" value="0.25" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_invite_popup.xml" value="0.25" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_mourning_space.xml" value="0.33" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_mourning_space_content.xml" value="0.5" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_new_media.xml" value="0.3419442556084296" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_new_mourning_space.xml" value="0.25" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_register.xml" value="0.2758152173913043" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/activity_wall.xml" value="0.33" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/content_main.xml" value="0.25" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/content_mourning_space.xml" value="0.18" />
         <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/content_new_bathing_site.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/content_new_mourning_space.xml" value="0.18342391304347827" />
         <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/fragment_blank.xml" value="0.18802083333333333" />
-        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/new_mourningspace_fragment.xml" value="0.33" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/fragment_new_media.xml" value="0.5" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/imageview_holder.xml" value="0.31567028985507245" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/new_mourningspace_fragment.xml" value="0.21680216802168023" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/space_button.xml" value="0.22" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/space_button_layout.xml" value="0.14492753623188406" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/layout/table_layout.xml" value="0.18342391304347827" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/menu/gallery_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/menu/media_menu.xml" value="0.25" />
         <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/menu/menu_main.xml" value="0.1537037037037037" />
-        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/menu/new_menu.xml" value="0.1" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/menu/menu_space.xml" value="0.259375" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/menu/new_menu.xml" value="0.25" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/menu/wall_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/mipmap-anydpi-v26/ic_gallery.xml" value="0.3675" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/mipmap-anydpi-v26/ic_gallery_round.xml" value="0.3675" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3675" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3675" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/mipmap-anydpi-v26/ic_wall.xml" value="0.3675" />
+        <entry key="..\:/Users/death/Documents/GitHub/Memendo/app/src/main/res/mipmap-anydpi-v26/ic_wall_round.xml" value="0.3675" />
       </map>
     </option>
   </component>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent" android:layout_width="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:padding="20dp"
         tools:context=".NewMourningSpaceFragment">
 
@@ -34,8 +34,8 @@
             android:hint="@string/name"
             android:inputType="text"
             android:paddingBottom="10dp"
-            android:theme="@style/TextLabel"
             android:textAppearance="@android:style/TextAppearance.Material.Menu"
+            android:theme="@style/TextLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.55"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,51 +43,74 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="68dp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+        <TextView
+            android:id="@+id/bornDateText"
+            android:layout_width="178dp"
+            android:layout_height="27dp"
+            android:ems="10"
+            android:text="@string/birth_date"
+            android:textColor="@color/colorPrimaryDark"
+            android:theme="@style/TextLabelSmall"
+            app:layout_constraintBottom_toBottomOf="@+id/deceasedDateText"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/editName"
+            app:layout_constraintTop_toTopOf="@+id/deceasedDateText"
+            app:layout_constraintVertical_bias="0.0" />
 
+        <TextView
+            android:id="@+id/deceasedDateText"
             android:layout_width="180dp"
-            android:layout_height="71dp"
-            android:layout_marginTop="4dp"
-            android:hint="@string/birth_date"
-            android:theme="@style/TextLabel"
-            android:textAppearance="@android:style/TextAppearance.Material.Menu"
-            app:layout_constraintEnd_toEndOf="@id/guideline4"
+            android:layout_height="27dp"
+            android:layout_marginTop="36dp"
+            android:ems="10"
+            android:text="@string/deceased_date"
+            android:textColor="@color/colorPrimaryDark"
+            android:theme="@style/TextLabelSmall"
+            app:layout_constraintEnd_toEndOf="@+id/editName"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editName">
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toBottomOf="@+id/editName" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/birthDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/date_form"
-                android:textColor="@color/colorPrimaryDark"
-                tools:ignore="DuplicateSpeakableTextCheck" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-
-            android:layout_width="180dp"
-            android:layout_height="71dp"
-            android:layout_marginTop="4dp"
-            android:hint="@string/deceased_date"
-            android:theme="@style/TextLabel"
+        <com.santalu.maskedittext.MaskEditText
+            android:id="@+id/bornDate"
+            android:layout_width="181dp"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            app:met_mask="##.##.####"
+            android:paddingBottom="20dp"
             android:textAppearance="@android:style/TextAppearance.Material.Menu"
+            android:theme="@style/TextLabel"
+            app:layout_constraintBottom_toBottomOf="@+id/deceasedDate"
+            app:layout_constraintEnd_toEndOf="@id/guideline4"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/editName"
+            app:layout_constraintTop_toBottomOf="@+id/deceasedDateText"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+        <com.santalu.maskedittext.MaskEditText
+            android:id="@+id/deceasedDate"
+            android:layout_width="182dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:inputType="date"
+            android:paddingBottom="20dp"
+            android:textAppearance="@android:style/TextAppearance.Material.Menu"
+            android:theme="@style/TextLabel"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/guideline3"
-            app:layout_constraintTop_toBottomOf="@+id/editName">
+            app:layout_constraintTop_toBottomOf="@+id/editName"
+            app:met_mask="##.##.####"
+            tools:ignore="SpeakableTextPresentCheck" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/deceasedDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/date_form"
-                android:textColor="@color/colorPrimaryDark" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+</FrameLayout>
