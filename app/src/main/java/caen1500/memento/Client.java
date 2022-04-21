@@ -1,9 +1,5 @@
 package caen1500.memento;
 
-import android.graphics.ImageDecoder;
-import android.os.AsyncTask;
-
-import androidx.core.text.PrecomputedTextCompat;
 
 import org.json.JSONObject;
 
