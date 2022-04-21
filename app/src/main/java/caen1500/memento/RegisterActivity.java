@@ -12,6 +12,7 @@ import com.santalu.maskedittext.MaskEditText;
 public class RegisterActivity extends AppCompatActivity {
     private MaskEditText inputPhoneNumber;
     private Button registerButton;
+    private Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 finish();
             }
         });

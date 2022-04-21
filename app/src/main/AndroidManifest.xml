@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -14,7 +15,11 @@
         android:theme="@style/Theme.Memento">
         <activity
             android:name=".InvitePopup"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="caen1500.memento.MourningSpaceActivity" />
+        </activity>
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />
@@ -36,6 +41,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="caen1500.memento.MourningSpaceActivity" />
         </activity>
+
         <activity
             android:name=".WallActivity"
             android:exported="false"

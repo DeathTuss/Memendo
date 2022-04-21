@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -33,6 +34,7 @@ public class InvitePopup extends AppCompatActivity {
     private ImageView contactButton;
     private Button sendInviteButton;
     private String phoneNumber, path;
+    private JsonHelperClass jsonHelper;
     private static int PICK_CONTACT = 1;
     private JSONObject groupData;
 
@@ -44,56 +46,57 @@ public class InvitePopup extends AppCompatActivity {
         if (b != null)
             path = b.getString("path");
 
-
+        jsonHelper = new JsonHelperClass();
         inputPhoneNumber = findViewById(R.id.mask_invite_phone);
         contactButton = findViewById(R.id.contacts);
-        sendInviteButton = findViewById(R.id.invite_button);
+        sendInviteButton = findViewById(R.id.send_invite_button);
 
+        System.out.println(getGroupInfo());
+        contactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(checkContactPermission()) {
+                    pickContact();
+                } else
+                    requestContactPermission();
+            }
+        });
         sendInviteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                phoneNumber = inputPhoneNumber.getRawText();
                 sendInvite();
             }
         });
 
     }
 
+    private void pickContact() {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(intent, PICK_CONTACT);
+    }
+
     private void sendInvite() {
         Runnable runnable = ()->{
             Client client = Client.getInstance();
-            client.inviteUser(phoneNumber, getGroupId());
+            client.inviteUser(phoneNumber, getGroupInfo());
         };
         new Thread(runnable).start();
     }
 
-    private int getGroupId() {
-        int noGroup = 0;
-        File file = new File(path+"/group_id.json");
-        if(file.exists()) {
-            fileToObject(file);
-            return 1;
-        } else
-            return noGroup;
-    }
-
-    private void fileToObject(File file) {
-        FileReader fileReader = null;
+    private String getGroupInfo() {
         try {
-            fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            StringBuilder stringBuilder = new StringBuilder();
-            String line = bufferedReader.readLine();
-            while (line != null){
-                stringBuilder.append(line).append("\n");
-                line = bufferedReader.readLine();
-            }
-            bufferedReader.close();
-            String objectString = stringBuilder.toString();
-            groupData = new JSONObject(objectString);
+            JSONObject tmp = jsonHelper.toJsonObject(path+"/deceasedInfo.json");
+
+            return tmp.toString();
+
         } catch (IOException | JSONException e) {
-             e.printStackTrace();
+            e.printStackTrace();
+            return null;
         }
     }
+
+
     private boolean checkContactPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) ==
                 (PackageManager.PERMISSION_GRANTED);
