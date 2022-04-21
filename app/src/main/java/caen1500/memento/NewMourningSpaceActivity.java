@@ -17,6 +17,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.santalu.maskedittext.MaskEditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -132,9 +135,14 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
         }
     }
 
-
-
-
+    private String toJsonString() throws JSONException {
+        JSONObject theDeceasedInfo = new JSONObject();
+        theDeceasedInfo.put("name", name.getEditText().getText().toString());
+        theDeceasedInfo.put("bornOnDate", birthDate.getText());
+        theDeceasedInfo.put("deceasedOnDate", deceasedDate.getText());
+        theDeceasedInfo.put("groupNumber", 0);
+        return theDeceasedInfo.toString();
+    }
 
     private void clear() {
         name.setHelperText(null);

@@ -75,42 +75,24 @@ public class WallActivity extends AppCompatActivity {
     }
 
     private void loadText() {
-        fileToArray();
-        if(posts != null) {
-            for (int i = 0; i < posts.length(); i++) {
-                try {
+        try {
+            fileToArray();
+            if(posts != null) {
+                for (int i = 0; i < posts.length(); i++) {
                     JSONObject object = posts.getJSONObject(i);
                     displayText.append((String) object.get("Name") + "\n");
                     displayText.append((String) object.get("Text") + "\n\n");
-                } catch (JSONException e) {
-                   // displayText.setText(R.string.loadPostError);
-                    e.printStackTrace();
                 }
             }
+        } catch (JSONException | IOException e) {
+            displayText.setText(R.string.loadPostError);
         }
+
     }
 
-    private void fileToArray() {
-        File file = new File(path+"wall.json");
-        FileReader fileReader = null;
-        try {
-            fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            StringBuilder stringBuilder = new StringBuilder();
-            String line = bufferedReader.readLine();
-            while (line != null){
-                stringBuilder.append(line).append("\n");
-                line = bufferedReader.readLine();
-            }
-            bufferedReader.close();
-            String arrayString = stringBuilder.toString();
-            posts = new JSONArray(arrayString);
-        } catch (IOException e) {
-            displayText.setText(R.string.loadPostError+"filetoarray");
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void fileToArray() throws JSONException, IOException {
+        JsonHelperClass helper = new JsonHelperClass();
+        posts = helper.toJsonArray(path+"/wall.json");
     }
 
     private void saveAndPost() {
@@ -156,3 +138,4 @@ public class WallActivity extends AppCompatActivity {
         }
     }
 }
+

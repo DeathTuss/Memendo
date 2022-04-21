@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         path = sharedPreferences.getString("path", "");
+
         Client client = Client.getInstance();
         client.setUserPath(path);
         new Thread(client).start();
