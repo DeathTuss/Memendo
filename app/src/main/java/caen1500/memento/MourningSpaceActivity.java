@@ -27,6 +27,7 @@ import java.util.Objects;
 public class MourningSpaceActivity extends AppCompatActivity {
 
     private static String path;
+    private int groupId;
     private static Date birthDate, deathDate;
 
     @Override

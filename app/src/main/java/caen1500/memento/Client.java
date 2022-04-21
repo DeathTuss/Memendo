@@ -138,9 +138,11 @@ public class Client implements Runnable {
         }
     }
 
-    public boolean inviteUser(String phoneNumber, int groupId) {
-        try (Stream<String> stream = Files.lines(Paths.get(userPath+"/user.txt"))) {
-            user = stream.toString();
+    public boolean inviteUser(String phoneNumber, String deceasedInfo) {
+        try {
+            out.writeUTF("INV"+phoneNumber+"/"+deceasedInfo);
+
+            out.flush();
             return true;
         } catch (IOException e) {
             e.printStackTrace();

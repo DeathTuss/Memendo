@@ -28,6 +28,7 @@ import java.util.Objects;
 public class NewMourningSpaceActivity extends AppCompatActivity {
 
     private TextInputLayout name;
+    private JsonHelperClass jsonHelper;
     private MaskEditText birthDate, deceasedDate;
 
     @Override
@@ -38,6 +39,7 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.new_menu);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        jsonHelper = new JsonHelperClass();
 
     }
 
@@ -97,8 +99,17 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        File deceasedFile = new File(myDir.getPath()+"/deceasedInfo.json");
+        try {
+            deceasedFile.createNewFile();
+            jsonHelper.saveObjectToFile(toJsonString(), deceasedFile.toString());
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
         clear();
     }
+
+
     private boolean validateName() {
         if (name.getEditText().getText().toString().equals("")) {
             name.setHelperText("Name required");
@@ -118,7 +129,7 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
                     R.color.colorAccent)));
             return false;
         } else {
-            birthDate.setText(null);
+           // birthDate.setText(null);
             return true;
         }
     }
@@ -130,7 +141,7 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
                     R.color.colorAccent)));
             return false;
         } else {
-            deceasedDate.setText(null);
+          //  deceasedDate.setText(null);
             return true;
         }
     }
@@ -138,8 +149,8 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
     private String toJsonString() throws JSONException {
         JSONObject theDeceasedInfo = new JSONObject();
         theDeceasedInfo.put("name", name.getEditText().getText().toString());
-        theDeceasedInfo.put("bornOnDate", birthDate.getText());
-        theDeceasedInfo.put("deceasedOnDate", deceasedDate.getText());
+        theDeceasedInfo.put("bornOnDate", birthDate.getRawText());
+        theDeceasedInfo.put("deceasedOnDate", deceasedDate.getRawText());
         theDeceasedInfo.put("groupNumber", 0);
         return theDeceasedInfo.toString();
     }

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +37,7 @@ public class WallActivity extends AppCompatActivity {
     private TextView displayText;
     private Button postButton;
     private JSONArray posts;
+    private JsonHelperClass helper;
     private SwitchCompat share;
 
     @Override
@@ -43,6 +45,7 @@ public class WallActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wall);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        helper = new JsonHelperClass();
         Bundle b = getIntent().getExtras();
         if(b != null)
             path = b.getString("path")+"/wall/";
@@ -85,13 +88,12 @@ public class WallActivity extends AppCompatActivity {
                 }
             }
         } catch (JSONException | IOException e) {
-            displayText.setText(R.string.loadPostError);
+            e.printStackTrace();
         }
 
     }
 
     private void fileToArray() throws JSONException, IOException {
-        JsonHelperClass helper = new JsonHelperClass();
         posts = helper.toJsonArray(path+"/wall.json");
     }
 
@@ -100,7 +102,7 @@ public class WallActivity extends AppCompatActivity {
         writText.setText("");
         String JSONtext = makeItJson(theText).toString();
         displayText.append("Me\n"+ theText +"\n\n");
-        saveToFile(JSONtext);
+        helper.saveObjectToFile(posts.toString(),path+"wall.json");
         sharePost(JSONtext);
     }
 
@@ -128,6 +130,7 @@ public class WallActivity extends AppCompatActivity {
     }
 
     private void saveToFile(String text) {
+
         try (FileWriter file = new FileWriter(path+"wall.json")) {
             //We can write any JSONArray or JSONObject instance to the file
             file.write(posts.toString());
