@@ -17,15 +17,25 @@
 
     <style name="TextLabel" parent="Widget.Design.TextInputLayout">
         <item name="android:textColorHint">@color/colorPrimaryDark</item>
+        <item name="android:textSize">30sp</item>
+        <item name="colorControlNormal">@color/colorPrimaryDark</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
+    <style name="TextLabelSmall" parent="Widget.Design.TextInputLayout">
+        <item name="android:textColorHint">@color/colorPrimaryDark</item>
         <item name="android:textSize">20sp</item>
         <item name="colorControlNormal">@color/colorPrimaryDark</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
 
-
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.PopupTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

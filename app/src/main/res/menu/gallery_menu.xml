@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="200dp">
+
+
+    <item
+        android:id="@+id/category_spinner"
+        android:title="@string/categories"
+        app:actionViewClass="android.widget.Spinner"
+        android:text="@string/categories"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/add_media"
+        android:title="@string/add_media"
+        android:icon="@drawable/ic_add_pic"
+        app:showAsAction="ifRoom" />
+</menu>

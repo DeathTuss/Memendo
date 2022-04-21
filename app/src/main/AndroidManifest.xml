@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="caen1500.memento">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,17 +13,59 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Memento">
         <activity
+            android:name=".InvitePopup"
+            android:exported="false" />
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NewMediaPopup"
+            android:exported="false"
+            android:label="@string/visual_memories"
+            android:theme="@style/AppTheme.PopupTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="caen1500.memento.MourningSpaceActivity" />
+        </activity>
+        <activity
+            android:name=".GalleryActivity"
+            android:exported="false"
+            android:label="@string/visual_memories"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="caen1500.memento.MourningSpaceActivity" />
+        </activity>
+        <activity
+            android:name=".WallActivity"
+            android:exported="false"
+            android:label="@string/write_memories"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="caen1500.memento.MourningSpaceActivity" />
+        </activity>
+        <activity
+            android:name=".MourningSpaceActivity"
+            android:exported="false"
+            android:label="@string/in_memory_of"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="caen1500.memento.MainActivity" />
+        </activity>
+        <activity
             android:name=".NewMourningSpaceActivity"
             android:label="@string/title_activity_new_mournig_space"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="caen1500.memento.MainActivity" />
         </activity>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
