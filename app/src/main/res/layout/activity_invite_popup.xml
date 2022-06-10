@@ -30,11 +30,11 @@
         android:layout_marginBottom="236dp"
         android:text="@string/send_invite"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/mask_invite_phone"
-        app:layout_constraintHorizontal_bias="0.801"
+        app:layout_constraintEnd_toEndOf="@+id/contacts"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/mask_invite_phone"
         app:layout_constraintTop_toBottomOf="@+id/mask_invite_phone"
-        app:layout_constraintVertical_bias="0.118" />
+        app:layout_constraintVertical_bias="0.152" />
 
     <ImageView
         android:id="@+id/contacts"
@@ -46,5 +46,19 @@
         app:layout_constraintStart_toEndOf="@+id/mask_invite_phone"
         app:layout_constraintTop_toTopOf="@+id/mask_invite_phone"
         app:srcCompat="@drawable/ic_contacts" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/invite_other_switch"
+        android:layout_width="178dp"
+        android:layout_height="62dp"
+        android:text="@string/can_invite_others"
+        android:paddingStart="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/send_invite_button"
+        app:layout_constraintEnd_toStartOf="@+id/send_invite_button"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/mask_invite_phone"
+        app:layout_constraintTop_toTopOf="@+id/send_invite_button"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="RtlSymmetry,UseSwitchCompatOrMaterialXml" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,8 @@
 package caen1500.memento;
 
+import static android.os.Environment.DIRECTORY_DCIM;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -7,29 +10,26 @@ import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 
+import android.os.CancellationSignal;
+import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
+import android.util.Size;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.autofill.AutofillValue;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
@@ -40,12 +40,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.time.Duration;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Locale;
 
 public class NewMediaPopup extends Activity {
     private static final int SELECT_PICTURE = 1;
@@ -53,11 +55,12 @@ public class NewMediaPopup extends Activity {
     private Spinner chosenCategory;
     private TextInputLayout newCategory;
     private static String path;
+    private int groupId;
     private Uri imagePath;
     private JSONArray mediaArray;
     private ImageView preview;
     private Button save, cancel;
-    private ImageButton addImage, addVideo;
+    private ImageButton addImage;
     private static SwitchCompat share;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,26 +68,24 @@ public class NewMediaPopup extends Activity {
         setContentView(R.layout.activity_new_media);
 
         Bundle b = getIntent().getExtras();
-        if(b != null)
+        if(b != null) {
             path = b.getString("path");
+            groupId = b.getInt("groupId");
+        }
 
         chosenCategory = (Spinner) findViewById(R.id.categoriesDrop);
         newCategory = findViewById(R.id.add_category);
         share = findViewById(R.id.share);
         preview = findViewById(R.id.imageView);
         addImage = findViewById(R.id.add_media_button);
-        addVideo = findViewById(R.id.addVideoButton);
         cancel = findViewById(R.id.cancel_button);
         save = findViewById(R.id.save_button);
 
         share.setVisibility(View.INVISIBLE);
         fillCategoryList();
-        if(true) {
+        if(groupId != 0) {
             share.setVisibility(View.VISIBLE);
-          //  shareContent();
         }
-
-
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
@@ -95,10 +96,9 @@ public class NewMediaPopup extends Activity {
 
         cancel.setOnClickListener(view -> finish());
         save.setOnClickListener(view -> saveAndPost());
-        addImage.setOnClickListener(view -> { Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        addImage.setOnClickListener(view -> { Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                                                     startActivityForResult(intent, 3); });
-        addVideo.setOnClickListener(view -> { Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Video.Media.INTERNAL_CONTENT_URI);
-            startActivityForResult(intent, 3); });
+
     }
 
     private void saveAndPost() {
@@ -125,40 +125,55 @@ public class NewMediaPopup extends Activity {
     }
 
     private void send() {
-        String imageData;
-        JSONObject jsonObject = new JSONObject();
-        try {
-            imageData = toBitmapString();
-            jsonObject.put("Format", "User1");
-            jsonObject.put("TimeStamp", System.currentTimeMillis()/1000);
-            jsonObject.put("data", imageData);
-        } catch (JSONException | IOException e) {
-            Toast.makeText(this, "Failed to share media", Toast.LENGTH_LONG);
+        String dataType = "IMG";
+        if(imagePath.toString().toLowerCase().contains("video") || imagePath.getPath().toLowerCase().contains(".mp4")) {
+            dataType = "VID";
         }
+        String finalDataType = dataType;
         Runnable runnable = ()->{
             Client client = Client.getInstance();
-            client.sendObject(jsonObject);
+            client.connect();
+            try {
+                client.sendObject(groupId, finalDataType, null, toBitArray(), chosenCategory.getSelectedItem().toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         };
         new Thread(runnable).start();
-
     }
 
-    private String toBitmapString() throws IOException {
+    private byte[] toBitArray() throws IOException {
         ContentResolver contentResolver = getContentResolver();
+        if(imagePath.toString().toLowerCase().contains("vid")) {
+            InputStream inputStream;
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            String[] split = imagePath.getPath().split(":");
+
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                inputStream = contentResolver.openInputStream(imagePath);
+            } else {
+                inputStream = contentResolver.openInputStream(imagePath);
+            }
+
+                byte[] buf = new byte[1024];
+                int n;
+                while (-1 != (n = inputStream.read(buf)))
+                    byteArrayOutputStream.write(buf, 0, n);
+                return byteArrayOutputStream.toByteArray();
+
+        } else {
+
             Bitmap bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, imagePath));
             ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100,
                     byteArrayBitmapStream);
-            byte[] b = byteArrayBitmapStream.toByteArray();
-            return Base64.encodeToString(b, Base64.DEFAULT);
-
+            return byteArrayBitmapStream.toByteArray();
+        }
     }
 
     private JSONObject makeItJson() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("Format", "User1");
-            jsonObject.put("TimeStamp", System.currentTimeMillis()/1000);
             jsonObject.put("URI", imagePath);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -198,7 +213,6 @@ public class NewMediaPopup extends Activity {
             }
 
         } else if(chosenCategory.getSelectedItem() != null) {
-            // Toast.makeText(this, chosenCategory.getSelectedItem(), Toast.LENGTH_LONG).show();
              return path + "/"+chosenCategory.getSelectedItem();
          }
         return path + "/Category.json";
@@ -221,12 +235,28 @@ public class NewMediaPopup extends Activity {
         if(resultCode == RESULT_OK && data != null) {
             Uri selectedMedia = data.getData();
 
-            if(selectedMedia.getPath().contains("VID_")) {
-                Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(selectedMedia.getPath(),
-                        MediaStore.Video.Thumbnails.MINI_KIND);
-                preview.setImageBitmap(thumbnail);
+            File file = new File(selectedMedia.getPath());//create path from uri
+            final String[] split = file.getPath().split(":");//split the path.
+            String filePath = "/"+split[1];//assign it to a string(your choice)
+
+            if(selectedMedia.getPath().toLowerCase().contains(".mp4") || selectedMedia.getPath().toLowerCase().contains("video")) {
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                    Size thumbSize = new Size(200,200);
+                    CancellationSignal ca = new CancellationSignal();
+                    try {
+                        Bitmap thumbnail = getContentResolver().loadThumbnail(selectedMedia, thumbSize, ca);
+                        preview.setImageBitmap(thumbnail);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    Bitmap thumbnail = ThumbnailUtils.createVideoThumbnail(Environment.getExternalStorageDirectory().getPath() + filePath,
+                            MediaStore.Video.Thumbnails.MINI_KIND);
+                    preview.setImageBitmap(thumbnail);
+                }
             }
-            else if (selectedMedia.getPath().contains("IMG_")) {
+            else if (selectedMedia.getPath().toLowerCase().contains(".jpg") || selectedMedia.getPath().toLowerCase().contains("image")) {
                 preview.setImageURI(selectedMedia);
             }
             this.getContentResolver().takePersistableUriPermission(selectedMedia, Intent.FLAG_GRANT_READ_URI_PERMISSION);

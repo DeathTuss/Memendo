@@ -44,12 +44,15 @@ class JsonHelperClass {
          }
          bufferedReader.close();
          String arrayString = stringBuilder.toString();
-         return new JSONArray(arrayString);
+         if(arrayString.length() > 0)
+            return new JSONArray(arrayString);
+         else
+            return new JSONArray();
    }
 
    public boolean saveObjectToFile(String json, String filePath) {
       File file = new File(filePath);
-      FileWriter fileWriter = null;
+      FileWriter fileWriter;
       try {
          fileWriter = new FileWriter(file);
          BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -59,6 +62,17 @@ class JsonHelperClass {
       } catch (IOException e) {
          return false;
       }
+   }
+
+   public boolean hasValue(JSONArray json, String key, int value) throws JSONException {
+      JSONObject jsonObject;
+      for(int i = 0; i < json.length(); i++) {
+         jsonObject = json.getJSONObject(i);
+         if(jsonObject.getInt(key) == value) {
+            return true;
+         }
+      }
+      return false;
    }
 
 
