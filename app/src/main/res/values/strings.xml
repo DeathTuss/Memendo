@@ -42,4 +42,11 @@
     <string name="invite_others">Invite others</string>
     <string name="send_invite">Send invite</string>
     <string name="date">Date</string>
+    <string name="enter_code">Enter code</string>
+    <string name="send">Send</string>
+    <string name="can_invite_others">Can invite others</string>
+    <string name="invite_error">Number does not belong to a registered user</string>
+    <string name="pending_invites">Pending invites</string>
+    <string name="disconnect_with_group">Disconnect with group</string>
+    <string name="remove_space">Remove space</string>
 </resources>

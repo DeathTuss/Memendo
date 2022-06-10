@@ -12,13 +12,23 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
+import android.content.ContentProvider;
+import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CancellationSignal;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,10 +39,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,11 +57,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -57,13 +71,12 @@ public class GalleryActivity extends AppCompatActivity {
 
     private static final int NUM_COLS = 2;
     private static String path;
-    private static Stream<Path> media;
-    private static Stream<Path> categories;
     private String[] categoryList;
     private Spinner chosenCategory;
-    private ArrayList<String> listOfFiles;
+    private ArrayList<String> listOfFiles = new ArrayList<String>();
     private JSONArray mediaArray;
     private TableLayout table;
+    private int groupId;
     private static final int STORAGE_PERMISSION_CODE = 101;
 
     @Override
@@ -71,11 +84,10 @@ public class GalleryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
 
-        if (b != null)
+        if (b != null) {
             path = b.getString("path") + "/gallery";
-        File folder = new File(path + "/Category.json");
-
-        listOfFiles = new ArrayList<>();
+            groupId = b.getInt("groupId");
+        }
         setContentView(R.layout.activity_gallery);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -106,7 +118,6 @@ public class GalleryActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
                 displayMedia();
             }
         });
@@ -117,24 +128,16 @@ public class GalleryActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-       // getViews();
-        switch (item.getItemId()) {
-         //   case R.id.category_spinner:
-           //     categories();
-           //     return true;
-            case R.id.add_media:
-                addMedia();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.add_media) {
+            addMedia();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
-    private void categories() {
-    }
 
     private void displayMedia() {
-
+        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(500, 500);
         String fileName;
 
         if (chosenCategory.getSelectedItem() != null && !chosenCategory.getSelectedItem().equals("Category")) {
@@ -147,9 +150,9 @@ public class GalleryActivity extends AppCompatActivity {
                 loadMediaList(fileName);
             }
         }
-        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(500, 500);
+
         int placed = 0;
-        int NUM_ROWS = listOfFiles.size() / NUM_COLS;
+        int NUM_ROWS = (listOfFiles.size() / NUM_COLS)+1;
 
         table = (TableLayout) findViewById(R.id.tableForSpaceIcons);
         table.removeAllViewsInLayout();
@@ -158,25 +161,120 @@ public class GalleryActivity extends AppCompatActivity {
             table.addView(tableRow);
             for (int col = 0; col < NUM_COLS; col++) {
                 if (placed < listOfFiles.size()) {
-                    ImageView mediaView = new ImageView(this);
-                    mediaView.setPadding(5, 5, 5, 5);
-                    mediaView.setScaleType(ImageView.ScaleType.FIT_XY);
-                    mediaView.setImageURI(Uri.parse(listOfFiles.get(placed)));
-                    mediaView.setLayoutParams(layoutParams);
+                    tableRow.addView(displayPicture(listOfFiles.get(placed), layoutParams));
+
                     placed++;
-                    tableRow.addView(mediaView);
                 }
             }
-
         }
-     //
+    }
+
+
+    private ImageView displayPicture(String uriToPicture, TableRow.LayoutParams layoutParams) {
+        Uri uri = Uri.parse(uriToPicture);
+        String filePath = null;
+        File file = new File(uri.getPath());
+        ImageView mediaView = new ImageView(this);
+        mediaView.setPadding(5, 5, 5, 5);
+        mediaView.setScaleType(ImageView.ScaleType.FIT_XY);
+        Bitmap thumbnail = null;
+        final String[] split = file.getPath().split(":");
+        if(uri.getPath().toLowerCase().contains(".mp4") || uri.getPath().toLowerCase().contains("video")) {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                Size thumbSize = new Size(200, 200);
+                CancellationSignal ca = new CancellationSignal();
+                if(split.length < 2) {
+                    try {   // Video received
+                        thumbnail = ThumbnailUtils.createVideoThumbnail(file, thumbSize, ca);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mediaView.setImageBitmap(thumbnail);
+                } else { // Video from own device
+                    try {
+                        thumbnail = getContentResolver().loadThumbnail(uri, thumbSize, ca);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                mediaView.setImageBitmap(thumbnail);
+            } else {
+                if(split.length != 2) { // Video received
+                    filePath = file.getPath();
+                } else  // Video from own device
+                    filePath = Environment.getExternalStorageDirectory().getPath() + "/" + split[1];
+                thumbnail = ThumbnailUtils.createVideoThumbnail(filePath,
+                        MediaStore.Video.Thumbnails.MINI_KIND);
+                mediaView.setImageBitmap(thumbnail);
+            }
+
+        } else {
+            mediaView.setImageURI(Uri.parse(uriToPicture));
+        }
+        mediaView.setLayoutParams(layoutParams);
+        String finalFilePath = filePath;
+        mediaView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               if(uriToPicture.toLowerCase().contains(".mp4") || uriToPicture.toLowerCase().contains("video")) {
+
+                   Bundle b = new Bundle();
+                   b.putString("uri", String.valueOf(uri));
+                   Intent i1 = new Intent(GalleryActivity.this, ViewVideo.class);
+                   i1.putExtras(b);
+                   startActivity(i1);
+               } else {
+                   Bundle b = new Bundle();
+                   b.putString("uri", String.valueOf(uri));
+                   Intent i1 = new Intent(GalleryActivity.this, ViewPicture.class);
+                   i1.putExtras(b);
+                   startActivity(i1);
+               }
+            }
+        });
+        return mediaView;
+    }
+
+    public static class ViewVideo extends AppCompatActivity {
+        private Uri videoUri;
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            Bundle b = getIntent().getExtras();
+            if (b != null) {
+                videoUri = Uri.parse(b.getString("uri"));
+            }
+            setContentView(R.layout.activity_show_media);
+            VideoView videoView = findViewById(R.id.videoView);
+            videoView.setVideoURI(videoUri);
+            MediaController mediaController = new MediaController(this);
+            mediaController.setAnchorView(videoView);
+            videoView.setMediaController(mediaController);
+            videoView.start();
+        }
+    }
+
+    public static class ViewPicture extends AppCompatActivity {
+        private Uri imageUri;
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            Bundle b = getIntent().getExtras();
+            if (b != null) {
+                imageUri = Uri.parse(b.getString("uri"));
+            }
+            setContentView(R.layout.activity_show_media);
+            ImageView imageView = findViewById(R.id.imageViewBig);
+            imageView.setImageURI(imageUri);
+        }
     }
 
     private void loadMediaList(String fileName) {
         String line;
         BufferedReader bufferedReader;
         StringBuilder stringBuilder;
-        FileReader fileReader = null;
+        FileReader fileReader;
 
         try {
             fileReader = new FileReader(fileName);
@@ -203,10 +301,7 @@ public class GalleryActivity extends AppCompatActivity {
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-
-
     }
-
 
     private void fillCategoryList() {
         File directoryPath = new File(path);
@@ -222,14 +317,9 @@ public class GalleryActivity extends AppCompatActivity {
     private void addMedia() {
         Bundle b = new Bundle();
         b.putString("path", path);
+        b.putInt("groupId", groupId);
         Intent i1 = new Intent(this, NewMediaPopup.class);
         i1.putExtras(b);
         startActivity(i1);
     }
-
-
-
-
-
-
 }

@@ -129,7 +129,6 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
                     R.color.colorAccent)));
             return false;
         } else {
-           // birthDate.setText(null);
             return true;
         }
     }
@@ -141,7 +140,6 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
                     R.color.colorAccent)));
             return false;
         } else {
-          //  deceasedDate.setText(null);
             return true;
         }
     }
@@ -151,7 +149,8 @@ public class NewMourningSpaceActivity extends AppCompatActivity {
         theDeceasedInfo.put("name", name.getEditText().getText().toString());
         theDeceasedInfo.put("bornOnDate", birthDate.getRawText());
         theDeceasedInfo.put("deceasedOnDate", deceasedDate.getRawText());
-        theDeceasedInfo.put("groupNumber", 0);
+        theDeceasedInfo.put("groupId", 0);
+        theDeceasedInfo.put("admin", true);
         return theDeceasedInfo.toString();
     }
 

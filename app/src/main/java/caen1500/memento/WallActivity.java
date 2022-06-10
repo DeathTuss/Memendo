@@ -26,6 +26,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -33,12 +34,15 @@ import java.util.stream.Stream;
 
 public class WallActivity extends AppCompatActivity {
     private static String path;
+    private String user;
     private EditText writText;
     private TextView displayText;
     private Button postButton;
     private JSONArray posts;
     private JsonHelperClass helper;
     private SwitchCompat share;
+    private Client client;
+    private int groupId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +51,18 @@ public class WallActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         helper = new JsonHelperClass();
         Bundle b = getIntent().getExtras();
-        if(b != null)
-            path = b.getString("path")+"/wall/";
+        if (b != null) {
+            path = b.getString("path") + "/wall/";
+            groupId = b.getInt("groupId");
+            user = b.getString("user");
+        }
         writText = findViewById(R.id.write_text);
         displayText = findViewById(R.id.display_text);
         postButton = findViewById(R.id.post_button);
         share = findViewById(R.id.share2);
-
-        share.setVisibility(View.INVISIBLE);
+        if (groupId == 0) {
+            share.setVisibility(View.INVISIBLE);
+        }
         posts = new JSONArray();
         loadText();
         postButton.setOnClickListener(new View.OnClickListener() {
@@ -66,8 +74,6 @@ public class WallActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.wall_menu);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
-
     }
 
     @Override
@@ -80,7 +86,7 @@ public class WallActivity extends AppCompatActivity {
     private void loadText() {
         try {
             fileToArray();
-            if(posts != null) {
+            if (posts != null) {
                 for (int i = 0; i < posts.length(); i++) {
                     JSONObject object = posts.getJSONObject(i);
                     displayText.append((String) object.get("Name") + "\n");
@@ -94,25 +100,23 @@ public class WallActivity extends AppCompatActivity {
     }
 
     private void fileToArray() throws JSONException, IOException {
-        posts = helper.toJsonArray(path+"/wall.json");
+        posts = helper.toJsonArray(path + "/wall.json");
     }
 
     private void saveAndPost() {
         String theText = writText.getText().toString();
         writText.setText("");
-        String JSONtext = makeItJson(theText).toString();
-        displayText.append("Me\n"+ theText +"\n\n");
-        helper.saveObjectToFile(posts.toString(),path+"wall.json");
-        sharePost(JSONtext);
+        displayText.append("Me\n" + theText + "\n\n");
+        helper.saveObjectToFile(posts.toString(), path + "wall.json");
+        sharePost(makeItJson(theText));
     }
 
     private JSONObject makeItJson(String theText) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("Name", "User1");
-            jsonObject.put("TimeStamp", System.currentTimeMillis()/1000);
+            jsonObject.put("Name", user);
+            jsonObject.put("TimeStamp", System.currentTimeMillis() / 1000);
             jsonObject.put("Text", theText);
-            jsonObject.put("share", share.isChecked());
             posts.put(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -121,24 +125,19 @@ public class WallActivity extends AppCompatActivity {
         return jsonObject;
     }
 
-    private void sharePost(String theText) {
-        // group id
-        // timestamp
-        // user
-        // text
-
-    }
-
-    private void saveToFile(String text) {
-
-        try (FileWriter file = new FileWriter(path+"wall.json")) {
-            //We can write any JSONArray or JSONObject instance to the file
-            file.write(posts.toString());
-            file.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void sharePost(JSONObject thePost) {
+        Runnable runnable = () -> {
+            client = Client.getInstance();
+            client.connect();
+            try {
+                client.sendObject(groupId, "wall", thePost.toString(), null, null);
+                client.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
+        new Thread(runnable).start();
     }
 }
+
 

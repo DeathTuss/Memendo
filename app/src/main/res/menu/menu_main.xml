@@ -5,7 +5,8 @@
     tools:context="se.miun.caen1500.dt031g.memento.MainActivity">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+   
 </menu>
