@@ -254,10 +254,12 @@ public class Client implements Runnable {
     }
 
     public void updateTimestamp(String timeStamp) throws IOException {
-        File newUpdate = new File(userPath+"/lastUpdate.txt");
-        FileWriter fileWriter = new FileWriter(newUpdate);
-        fileWriter.write(timeStamp);
-        fileWriter.flush();
+        if(timeStamp != null) {
+            File newUpdate = new File(userPath + "/lastUpdate.txt");
+            FileWriter fileWriter = new FileWriter(newUpdate);
+            fileWriter.write(timeStamp);
+            fileWriter.flush();
+        }
     }
     private void insertInWall(String data, String deceasedPath) throws JSONException, IOException {
         JSONArray jsonArray = jsonHelperClass.toJsonArray(deceasedPath+"/wall/wall.json");
@@ -268,7 +270,6 @@ public class Client implements Runnable {
 
     private void addMedia(byte[] data, String category, String deceasedPath, String type, String name) throws JSONException, IOException {
         Uri uri = saveInDevice(data, name, type);
-      //  System.out.println(uri);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("URI", uri);
         JSONArray jsonArray;
@@ -315,7 +316,6 @@ public class Client implements Runnable {
                 out.write(data);
             out.flush();
             out.close();
-            System.out.println("TACOOOOO: "+fileToSaveMedia);
             return Uri.fromFile(fileToSaveMedia);
         } catch (Exception e) {
             e.printStackTrace();
