@@ -207,12 +207,12 @@ public class Client implements Runnable {
         }
     }
 
-    public void update(String deceasedPath) throws IOException, JSONException {
+    public String update(String deceasedPath) throws IOException, JSONException {
         Stream<String> getLastUpdate = Files.lines(Paths.get(userPath+"/lastUpdate.txt"));
-        updateMedia(deceasedPath, getLastUpdate.collect(Collectors.joining()));
+        return updateMedia(deceasedPath, getLastUpdate.collect(Collectors.joining()));
     }
 
-    private void updateMedia(String deceasedPath, String lastUpdate) {
+    private String updateMedia(String deceasedPath, String lastUpdate) {
         String dataType, category, timeStamp;
         int dataSize;
         byte[] data;
@@ -244,17 +244,21 @@ public class Client implements Runnable {
                     }
                 }
                 timeStamp = in.readUTF();
-                File newUpdate = new File(userPath+"/lastUpdate.txt");
-                FileWriter fileWriter = new FileWriter(newUpdate);
-                fileWriter.write(timeStamp);
-                fileWriter.flush();
+                return timeStamp;
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-        }
 
+        }
+        return lastUpdate;
     }
 
+    public void updateTimestamp(String timeStamp) throws IOException {
+        File newUpdate = new File(userPath+"/lastUpdate.txt");
+        FileWriter fileWriter = new FileWriter(newUpdate);
+        fileWriter.write(timeStamp);
+        fileWriter.flush();
+    }
     private void insertInWall(String data, String deceasedPath) throws JSONException, IOException {
         JSONArray jsonArray = jsonHelperClass.toJsonArray(deceasedPath+"/wall/wall.json");
         JSONObject newWallPost = new JSONObject(data);
@@ -264,6 +268,7 @@ public class Client implements Runnable {
 
     private void addMedia(byte[] data, String category, String deceasedPath, String type, String name) throws JSONException, IOException {
         Uri uri = saveInDevice(data, name, type);
+      //  System.out.println(uri);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("URI", uri);
         JSONArray jsonArray;
@@ -291,14 +296,15 @@ public class Client implements Runnable {
         String newName = name.replace(' ', '_');
         if(type.equals("VID")) {
             fileName = "/"+newName + timeStamp + ".mp4";
+            System.out.println(fileName);
         } else
             fileName = "/"+newName + timeStamp + ".jpg";
-
+        System.out.println(fileName);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
             fileToSaveMedia = new File(context.getExternalFilesDir(null), fileName);
-        } else
+        } else {
             fileToSaveMedia = new File(dirToSaveMedia, fileName);
-        System.out.println(dirToSaveMedia+ fileName);
+        }
         if (fileToSaveMedia.exists()) fileToSaveMedia.delete();
         try {
             fileToSaveMedia.createNewFile();
@@ -309,6 +315,7 @@ public class Client implements Runnable {
                 out.write(data);
             out.flush();
             out.close();
+            System.out.println("TACOOOOO: "+fileToSaveMedia);
             return Uri.fromFile(fileToSaveMedia);
         } catch (Exception e) {
             e.printStackTrace();
