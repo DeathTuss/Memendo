@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     public void update() throws JSONException, IOException {
             client.setContext(this);
             Runnable runnable = () -> {
+                String newLastUpdate = null;
                 client.connect();
                 try {
                     client.updateInvites(this.getFilesDir()+"/invites.json");
@@ -112,10 +113,15 @@ public class MainActivity extends AppCompatActivity {
                 }
                 for (File f : spaces) {
                     try {
-                        client.update(f.getPath());
+                        newLastUpdate = client.update(f.getPath());
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
+                }
+                try {
+                    client.updateTimestamp(newLastUpdate);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             };
             new Thread(runnable).start();
