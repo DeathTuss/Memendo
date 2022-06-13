@@ -1,1 +1,2 @@
 # Memento
+Requires MementoServer
