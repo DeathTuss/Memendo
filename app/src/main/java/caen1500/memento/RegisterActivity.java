@@ -53,14 +53,21 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                registerButton.setEnabled(false);
                 Runnable runnable = ()->{
                     client = Client.getInstance();
                     client.connect();
                     registered = client.verify(inputPhoneNumber.getRawText());
                 };
                 new Thread(runnable).start();
-                if(registered) {
-                    finish();
+                try {
+
+                    Thread.sleep(2000);
+                    if(client.getUser() != null) {
+                        finish();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
 

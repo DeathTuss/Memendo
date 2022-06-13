@@ -198,6 +198,7 @@ public class Client implements Runnable {
 
             out.flush();
                 int group= in.readInt();
+                System.out.println("GroupId : "+group);
                 deceasedJson.put("groupId", group);
                 jsonHelperClass.saveObjectToFile(deceasedJson.toString(), deceasedInfoPath);
                 return true;
@@ -285,6 +286,7 @@ public class Client implements Runnable {
     }
 
     private Uri saveInDevice(byte[] data, String name, String type) {
+        System.out.println("Data Size: "+data.length);
         File dirToSaveMedia;
         File fileToSaveMedia;
         String fileName;
@@ -297,10 +299,9 @@ public class Client implements Runnable {
         String newName = name.replace(' ', '_');
         if(type.equals("VID")) {
             fileName = "/"+newName + timeStamp + ".mp4";
-            System.out.println(fileName);
-        } else
-            fileName = "/"+newName + timeStamp + ".jpg";
-        System.out.println(fileName);
+        } else {
+            fileName = "/" + newName + timeStamp + ".jpg";
+        }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
             fileToSaveMedia = new File(context.getExternalFilesDir(null), fileName);
         } else {
@@ -309,13 +310,15 @@ public class Client implements Runnable {
         if (fileToSaveMedia.exists()) fileToSaveMedia.delete();
         try {
             fileToSaveMedia.createNewFile();
-            FileOutputStream out = new FileOutputStream(fileToSaveMedia);
-            if(type.equals("IMG"))
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            else
-                out.write(data);
-            out.flush();
-            out.close();
+            FileOutputStream fileOutputStream = new FileOutputStream(fileToSaveMedia);
+            if(type.equals("IMG")) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+            } else {
+                fileOutputStream.write(data);
+            }
+            fileOutputStream.flush();
+            fileOutputStream.close();
+            System.out.println("fileOutputStream Size: "+fileToSaveMedia.length());
             return Uri.fromFile(fileToSaveMedia);
         } catch (Exception e) {
             e.printStackTrace();
